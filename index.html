@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="el">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>K.F.F Food Service — Καταγραφή Αποθήκης</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.44.0/tabler-icons.min.css">
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif; background: #f8fafc; color: #1e293b; min-height: 100vh; }
+.app { max-width: 680px; margin: 0 auto; padding: 16px 12px 80px; }
+h1 { font-size: 18px; font-weight: 600; color: #1e293b; margin-bottom: 2px; }
+.sub { font-size: 13px; color: #64748b; margin-bottom: 16px; }
+.tabs { display: flex; gap: 6px; margin-bottom: 12px; flex-wrap: wrap; }
+.tab { padding: 8px 16px; border-radius: 8px; border: 1px solid #e2e8f0; background: #fff; color: #64748b; font-size: 13px; cursor: pointer; }
+.tab.active { background: #eff6ff; border-color: #93c5fd; color: #1d4ed8; font-weight: 500; }
+.card { background: #fff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 14px 16px; margin-bottom: 12px; }
+.card-title { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; color: #94a3b8; margin-bottom: 10px; }
+input[type=text], input[type=date], input[type=email], input[type=password], select, textarea { width: 100%; padding: 9px 11px; border-radius: 8px; border: 1px solid #e2e8f0; background: #f8fafc; color: #1e293b; font-size: 14px; font-family: inherit; }
+input:focus, select:focus, textarea:focus { outline: none; border-color: #93c5fd; background: #fff; box-shadow: 0 0 0 3px rgba(147,197,253,0.2); }
+.mic-btn { width: 36px; height: 36px; border-radius: 8px; flex-shrink: 0; border: 1px solid #e2e8f0; background: #f8fafc; color: #94a3b8; font-size: 16px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+.mic-btn.active { background: #fef2f2; border-color: #fca5a5; color: #ef4444; }
+.btn-sm { padding: 7px 12px; border-radius: 8px; border: 1px solid #e2e8f0; background: #fff; color: #64748b; font-size: 13px; cursor: pointer; }
+.btn-success { border-color: #86efac; color: #16a34a; background: #f0fdf4; }
+.btn-danger { border-color: #fca5a5; color: #dc2626; background: #fef2f2; }
+.supplier-select-row { display: flex; gap: 8px; align-items: center; margin-bottom: 10px; }
+.supplier-select-row select { flex: 1; font-size: 15px; font-weight: 500; }
+.tbl-header-row { display: flex; gap: 8px; align-items: center; margin-bottom: 8px; flex-wrap: wrap; }
+.tbl-header-row h2 { font-size: 14px; font-weight: 600; color: #1e293b; flex: 1; }
+.hbtns { display: flex; gap: 6px; flex-wrap: wrap; }
+.catalog-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+.catalog-table th { font-size: 11px; font-weight: 600; color: #94a3b8; text-align: left; padding: 6px 8px; border-bottom: 1px solid #f1f5f9; background: #f8fafc; }
+.catalog-table td { padding: 0; border-bottom: 1px solid #f1f5f9; vertical-align: middle; }
+.catalog-table tr:last-child td { border-bottom: none; }
+.catalog-table tr.skip-row td { opacity: 0.3; }
+.cat-header-row td { background: #f1f5f9; padding: 6px 8px; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; color: #64748b; border-bottom: 1px solid #e2e8f0; }
+.prod-name-cell { padding: 7px 8px; font-weight: 500; color: #1e293b; min-width: 120px; }
+.field-cell { padding: 3px 3px; }
+.field-cell input { padding: 6px 7px; font-size: 13px; border-radius: 6px; min-width: 0; width: 100%; }
+.cell-with-mic { display: flex; gap: 3px; align-items: center; }
+.cell-mic { width: 28px; height: 28px; border-radius: 6px; flex-shrink: 0; border: 1px solid #e2e8f0; background: #f8fafc; color: #94a3b8; font-size: 13px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+.cell-mic.active { background: #fef2f2; border-color: #fca5a5; color: #ef4444; }
+.skip-btn { width: 28px; height: 28px; border-radius: 6px; border: 1px solid #e2e8f0; background: #fff; color: #94a3b8; font-size: 11px; cursor: pointer; flex-shrink: 0; }
+.skip-btn.skipped { background: #fffbeb; border-color: #fcd34d; color: #d97706; }
+.info-box { background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 8px; padding: 8px 12px; font-size: 13px; color: #1d4ed8; margin-bottom: 10px; }
+.empty { text-align: center; color: #94a3b8; font-size: 13px; padding: 24px 0; }
+.supplier-item { padding: 12px 14px; border: 1px solid #e2e8f0; border-radius: 8px; background: #f8fafc; margin-bottom: 10px; }
+.add-row { display: flex; gap: 6px; }
+/* LOGIN */
+.login-screen { display: flex; align-items: center; justify-content: center; min-height: 100vh; background: #f8fafc; }
+.login-box { background: #fff; border: 1px solid #e2e8f0; border-radius: 16px; padding: 36px 28px; width: 100%; max-width: 340px; text-align: center; box-shadow: 0 4px 24px rgba(0,0,0,0.06); }
+.login-logo { font-size: 13px; font-weight: 700; color: #64748b; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 8px; }
+.login-box h2 { font-size: 20px; font-weight: 700; margin-bottom: 4px; color: #1e293b; }
+.login-box p { font-size: 13px; color: #94a3b8; margin-bottom: 24px; }
+.login-box input { margin-bottom: 10px; text-align: center; letter-spacing: 2px; font-size: 16px; }
+.login-btn { width: 100%; padding: 12px; border-radius: 8px; border: none; background: #1d4ed8; color: #fff; font-size: 15px; font-weight: 600; cursor: pointer; margin-top: 4px; }
+.login-btn:active { background: #1e40af; }
+.login-error { font-size: 13px; color: #dc2626; margin-top: 10px; min-height: 18px; }
+/* MODAL */
+.modal-bg { position: fixed; inset: 0; background: rgba(0,0,0,0.4); display: flex; align-items: center; justify-content: center; padding: 20px; z-index: 100; }
+.modal { background: #fff; border-radius: 16px; padding: 22px; width: 100%; max-width: 400px; border: 1px solid #e2e8f0; }
+.modal h3 { font-size: 16px; font-weight: 600; margin-bottom: 14px; }
+.modal label { font-size: 12px; color: #64748b; display: block; margin-bottom: 4px; margin-top: 10px; }
+.modal textarea { resize: vertical; min-height: 70px; }
+.modal-btns { display: flex; gap: 8px; margin-top: 14px; }
+.modal-btns button { flex: 1; padding: 10px; }
+/* PWA install hint */
+.install-hint { background: #f0fdf4; border: 1px solid #86efac; border-radius: 8px; padding: 10px 12px; font-size: 12px; color: #166534; margin-bottom: 12px; display: none; }
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div id="loginScreen" class="login-screen">
+  <div class="login-box">
+    <div class="login-logo">K.F.F Food Service</div>
+    <h2>Καταγραφή Αποθήκης</h2>
+    <p>Εισάγετε τον κωδικό πρόσβασης</p>
+    <input type="password" id="loginInput" placeholder="••••••••••" onkeydown="if(event.key==='Enter') doLogin()">
+    <button class="login-btn" onclick="doLogin()">Είσοδος</button>
+    <div class="login-error" id="loginError"></div>
+  </div>
+</div>
+
+<!-- MAIN APP -->
+<div id="mainApp" style="display:none;">
+<div class="app">
+  <div class="install-hint" id="installHint">
+    💡 <strong>Tip:</strong> Για να προσθέσεις την εφαρμογή στην αρχική οθόνη: Safari → κουμπί κοινοποίησης → "Προσθήκη στην Αρχική Οθόνη" (iPhone) ή Chrome → μενού → "Προσθήκη στην αρχική οθόνη" (Android)
+  </div>
+  <h1>📦 Καταγραφή Αποθήκης</h1>
+  <p class="sub">K.F.F Food Service</p>
+  <div class="tabs">
+    <button class="tab active" onclick="showTab('record',this)">📋 Καταγραφή</button>
+    <button class="tab" onclick="showTab('manage',this)">⚙️ Διαχείριση</button>
+  </div>
+
+  <div id="tab-record">
+    <div class="card">
+      <div class="card-title">Στοιχεία καταγραφής</div>
+      <div class="supplier-select-row">
+        <select id="supplierSelect" onchange="loadSupplier()"><option value="">— Επίλεξε προμηθευτή —</option></select>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+        <div><label style="font-size:12px;color:#64748b;display:block;margin-bottom:3px;">📅 Ημ. καταγραφής</label><input type="date" id="recordDate"></div>
+        <div><label style="font-size:12px;color:#64748b;display:block;margin-bottom:3px;">🚚 Πιθανή παραλαβή</label><input type="date" id="deliveryDate"></div>
+      </div>
+    </div>
+
+    <div id="catalogSection" style="display:none;">
+      <div class="card" style="padding-bottom:8px;">
+        <div class="tbl-header-row">
+          <h2 id="catalogTitle">Λίστα προϊόντων</h2>
+          <div class="hbtns">
+            <button class="btn-sm btn-success" onclick="openEmailModal()">📧 Email</button>
+            <button class="btn-sm" onclick="printList()">🖨️ Εκτύπωση</button>
+            <button class="btn-sm btn-danger" onclick="clearFields()">🗑️ Καθαρισμός</button>
+          </div>
+        </div>
+        <div class="info-box">Πάτα <strong>⏭</strong> για παράλειψη. Κάθε πεδίο έχει 🎤 για φωνή.</div>
+        <div style="overflow-x:auto;">
+          <table class="catalog-table">
+            <thead><tr>
+              <th style="min-width:130px;">Προϊόν</th>
+              <th style="min-width:90px;">Β) Ποσότητα</th>
+              <th style="min-width:85px;">Γ) Λήξη</th>
+              <th style="min-width:110px;">Δ) Παρατήρηση</th>
+              <th style="min-width:100px;">Ε) Προτ. παραγγελία</th>
+              <th style="min-width:26px;"></th>
+            </tr></thead>
+            <tbody id="catalogBody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div id="noSupplierMsg" class="card" style="text-align:center;color:#94a3b8;padding:30px;">
+      ☝️ Επίλεξε προμηθευτή για να δεις τη λίστα προϊόντων του.
+    </div>
+  </div>
+
+  <div id="tab-manage" style="display:none;">
+    <div class="card">
+      <div class="card-title">Προσθήκη νέου προμηθευτή</div>
+      <div class="add-row">
+        <input type="text" id="newSupplierName" placeholder="Όνομα προμηθευτή...">
+        <button class="btn-sm btn-success" onclick="addSupplier()" style="white-space:nowrap;">+ Προσθήκη</button>
+      </div>
+    </div>
+    <div id="supplierManageList"></div>
+  </div>
+</div>
+</div>
+
+<!-- EMAIL MODAL -->
+<div class="modal-bg" id="emailModal" style="display:none;">
+  <div class="modal">
+    <h3>📧 Αποστολή email</h3>
+    <label>Email εταιρείας</label><input type="email" id="companyEmail" placeholder="company@example.com">
+    <label>Θέμα</label><input type="text" id="emailSubject">
+    <label>Μήνυμα (προαιρετικό)</label>
+    <textarea id="emailMsg" placeholder="π.χ. Καταγραφή για έγκριση παραγγελίας..."></textarea>
+    <div class="modal-btns">
+      <button class="btn-sm" onclick="closeModal()">Ακύρωση</button>
+      <button class="btn-sm btn-success" onclick="sendEmail()">📨 Αποστολή</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+const SK = 'kff_v1_suppliers';
+const EK = 'kff_v1_email';
+const PASS = 'tolis@kff';
+
+function doLogin() {
+  if (document.getElementById('loginInput').value === PASS) {
+    document.getElementById('loginScreen').style.display = 'none';
+    document.getElementById('mainApp').style.display = 'block';
+    document.getElementById('installHint').style.display = 'block';
+    init();
+  } else {
+    document.getElementById('loginError').textContent = 'Λάθος κωδικός. Δοκίμασε ξανά.';
+    document.getElementById('loginInput').value = '';
+  }
+}
+
+function grISO() {
+  const d = new Date(new Date().toLocaleString('en-US',{timeZone:'Europe/Athens'}));
+  return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+}
+function grDT() { return new Date().toLocaleString('el-GR',{timeZone:'Europe/Athens'}); }
+function fmtDate(d) { if(!d) return '—'; const[y,m,day]=d.split('-'); return `${day}/${m}/${y}`; }
+
+const DS = [
+  {name:'Βικρε',groups:[{label:'',products:['Κοτομπούκιες','Γεμιστό Μπιφτέκι','Σνίτσελ Πανέ','Γύρος Χοιρινός','Strips','Σουτζουκάκι 90gr','Χωρ. Μπιφτέκι 140gr','Σουτζουκάκι 70gr','Πανσετάκι','Μπιφτέκι Σχάρας','Crispy','Γύρος Κοτόπουλο','Σις Πολίτικο','Σουβλάκι Κοτ. Στήθος','Κότσι','Μπιφτέκι 170gr','Σνίτσελ Χοιρ. Πανέ','Σνίτσελ Χοιρ. Μερίδος','Σνίτσελ Κοτ. Μερίδος','Σουτζουκάκι 30gr','Κοντοσούβλι Χοιρινό 3Kg','Κοντοσούβλι Χοιρινό 5Kg','Κοντοσούβλι Κοτόπουλο 3Kg','Κοντοσούβλι Κοτόπουλο 5Kg','Κοκορέτσι 3Kg','Κοκορέτσι 5Kg','Φιλέτο Κοτ. Στήθος','Αρνίσια Παϊδάκια']}]},
+  {name:'Στόχος',groups:[{label:'🔥 Ψημένα',products:['Γύρος Χοιρ.','Γύρος Κοτ.','Μαμαδάκι','Μπουτάκι','Κεφτεδάκι','Φιλέτο','Καλαμάτο','Homestyle Φιλέτο','Homestyle Φιλετάκι','Μαλλιά Αγγέλου','Pop Corn','American Burger','Pulled Porc','Μπριζολάκι']},{label:'🥩 Ωμά',products:['Η130','Σουτζουκάκι','Μαμαδάκι','Smashed','Κριτσίνι','Γεμιστό Μπιφτέκι','Καλαμάτο','Κοκορέτσι','Κεμπάπ']}]},
+  {name:'Μάκης',groups:[{label:'',products:['Χοιρινό Κοντοσούβλι','Μοσχαρίσιο Κοντοσούβλι']}]},
+  {name:'Αλεξάκης',groups:[{label:'',products:['Alex 16αρα','Alex 17αρα','Alex 20αρα','Δ.Χ 16αρα','Δ.Χ 17αρα','Πιτάκι','Pocket','Κυπριακή']}]},
+  {name:'Υφαντής',groups:[{label:'',products:['Μπέικον φ.','Πικ Νικ φ.','Γαλοπούλα φ.','Λουκάνικο Πεπερόνε','Hot Dog 17αρι','Hot Dog 22αρι','Vienna','Μπριζόλα φ.','Ωμοπλάτη φ.','Πάριζα φ.','Σαλ. Πεπερόνε φ.','Σαλ. Αέρος φ.','Βήρας φ.','Μπέικον ρολό φ.','Της Μάρως λουκ.','Πεπερόνε Ωρίμανσης φ.','Προσούτο','Πιροσκί','Μορταδέλα φ.','Μπέικον φ. Ferrano','Μπέικον Κύβος','Μπέικον άκοπο','Μπαστούνι Πάριζα','Μπαστούνι Πικ Νικ','Μπαστούνι Αέρος','Μπαστούνι Γαλοπούλα','Μπαστούνι Μορταδέλα','Μπαστούνι Βήρας','Κοτομπουκιές','Μπιφτέκι']}]},
+  {name:'Καλαμάτας',groups:[{label:'',products:['Angus','80αρι ανάμεικτο','Premium']}]},
+  {name:'Κολιός',groups:[{label:'',products:['16αρα','17αρα','Κίτρινη','Τετράγωνη','Κυπριακή']}]},
+  {name:'Τρονικ/Αρτιμα/Leader/Αρβανίτης',groups:[{label:'',products:['Γκούντα φ.','Κεφαλοτύρι τριμ.','Mozzarella τριμ.','Καπνιστή γκούντα','Καπνιστό σαγανάκι','Μανούρι','Παρμεζάνα τριμ.','Παρμεζάνα Flakes','Σαγανάκι φ.','Ενταμ φ.','Γκούντα τριμ.','Τσένταρ φ.','Λευκό τυρί','Φέτα','1/8','Regato','Μπαστούνι Mozzarella','Μπαστούνι Γκούντα','Μπαστούνι Σαγανάκι','Μπαστούνι Ενταμ','Μπαστούνι ημίσκληρο','Μπαστούνι Ελάρτι Γραβιέρα','Mozzarella fresh','Τυρί κρέμα','Ταλαγάνι','Χαλούμι','Χαλούμι Μπαστούνι','Βούτυρο 2,5kg','Βούτυρο 250gr','Βούτυρο 10gr','Μαργαρίνη','Μαργαρίνη μερίδες','Κρέμα γάλακτος πορτοκαλί','Κρέμα γάλακτος Meggle','Μπουράτα','Αρβανίτης φέτα','Αρβανίτης ντόπιο','Αρβανίτης Σαγανάκι φέτα','Αρβανίτης δοχείο λευκό τυρί']}]},
+  {name:'Ρύζια 5kg',groups:[{label:'',products:['Μπασματί','Αρμόριο','Άγριο','Carolina','Κίτρινο','Φάβα']}]},
+  {name:'Πατάτες/Καραμολέγκος',groups:[{label:'',products:['Eco 9','Eco 12','Eco 18','Agria 6','Agria 9','Agria 11','Agria 18','McCain φλούδα','McCain Crispers','McCain Petals','McCain Γλυκοπατάτα','Aviko Crinkle','Aviko Super','Aviko Μπιφτ. λαχανικών','Xana','Lutosa','Ολλανδική Ασπρη 10','Ολλανδική Ασπρη 20','Τουρκική 10','Τουρκική 20','LW φλούδα','LW 6','LW 9','LW 11','LW Twisters','LW Crisscuts','LW Onion Rings','Χασιώτη 16αρα','Χασιώτη 17αρα','Χασιώτη Κυπριακή','Καραμολέγκος']}]},
+  {name:'Alterra',groups:[{label:'',products:['Λωρίδα κοτόπουλο','Ψημένο σουβλάκι','Ψημένο φιλέτο']}]},
+  {name:'Αραμπατζής',groups:[{label:'',products:['Ταψί τυρί','Ταψί σπανάκι','Ταψί πράσο','Κρουασάν μικρό','Κρουασάν μεγάλο','Κρουασάν μπατόν','Ρολό πατάτα','Ρολό τυρί','Ρολό κρέμα','Ρολό σπανάκι','Ρολό κολοκύθι','Κουλούρι τυρί','Κουλούρι ελιά ντομάτα','Κουλούρι πραλίνα','Κουλούρι φιλαδέλφεια','Μινι ρολό τυρί','Μινι ρολό κρέμα','Μινι ρολό σπανάκι','Μινι ρολό πατάτα','Μινι ρολό πράσο','Μπουγάτσα τυρί','Μπουγάτσα κρέμα','Μπουγάτσα κρέμα κιλού','Μπέικον πεινιρλί','Ατομικό πεινιρλί','Στριφτή τυρί','Στριφτή πράσο','Εφης','Δίχτυ','Τρίγωνη χόρτα','Σφολιάτα','Brioche κότα','Κοτόπιτα']}]},
+  {name:'MrCroquette',groups:[{label:'',products:['Κασεροκροκέτες','Spring rolls λαχανικών','Με αλλαντικά','Κολοκυθοκεφτέδες','Μπιφτέκι λαχανικών','Φαλαφέλ','Σαγανάκι φέτα','Σαγανάκι Κεφαλοτύρι','Ντοματοκεφτέδες','Παστουρμάς','Μελιτζανοκροκέτα','Μελιτζανοκεφτέδες με τυρί','Sticks με τυρί Βερμίου','Sticks φέτα κανταίφι','Sticks mozzarella','Κολοκύθι με γραβιέρα','Πατατοκροκέτες','Spring rolls κοτόπουλο']}]},
+  {name:'Select',groups:[{label:'',products:['112 - Hamburger Σκέτο 9,5cm','113 - Hamburger Σους. 9,5cm','114 - Hamburger Νυφαδ. 9,5cm','111 - Large Σους. 11,5cm','412 - Ψωμί Σιμιγδάλι','453 - Brioche Bun Mini 7cm','539 - Brioche Bun Large 11,5cm','312 - Hot Dog Μικρό 15cm','187 - Hot Dog Σκέτο 19cm','106 - Hot Dog Σουσάμι 19cm','229 - Jumbo Σουσάμι 24cm','221 - Σάντουιτς Σκέτο 16cm','185 - Σάντουιτς Γίγας 20cm','193 - Τοστ Λευκό 860gr Νωπό','296 - Τοστ Λευκό Γίγας 1000gr Νωπό','179 - Μπαγκ. Ολ. Αλεσεώς Σους 5cm','008 - Μπαγκ. Λευκή 110','007 - Μπαγκ. Μαύρη 110','010 - Μπαγκ. Λευκή 250','560 - Μπαγκ. Λευκή 27cm Ψημένη','426 - Μπαγκέτα Βιενέζικη 26cm','146 - Μπαγκ. Πολύσπορη 25cm','655 - Μπαγκ. Λευκή Σους 27cm 4τμχ (Μάρκετ)','664 - Μπαγκ. Λευκή Χωρίς Σουσάμι 27cm 4τμχ (Μάρκετ)','Μπαγκ. Ολικής Σους 27cm 8τμχ (Μάρκετ)','061 - Πίτα Ολικής 17αρα','592 - Πίτα Καλαμποκί 17αρα','594 - Πίτα Τετράγωνη 18αρα','523 - Πίτα 15αρα Φουρνιστή','524 - Πίτα 17αρα Φουρνιστή','607 - Πίτα Μεσογειακή 17αρα','269 - Βάση Pizza 29cm','270 - Πίτα Pocket 17αρα','140 - Καρβελάκι Χειροποίητο','202 - Κουλούρι Στρογγυλό Θες/Νίκης','504 - Hamburger Black','122 - Κρουτόν 500gr','205 - Τορτίγια 25cm','208 - Τορτίγια 30cm','209 - Τορτίγια Ολικής 30cm','Φρυγανιά','667 - Ψωμ. Jackson Brioche Κ/Ψ','653 - Πίτα Απ\'Όλα','487 - Brioche Bun King','293 - Hamburger King με Σουσάμι','577 - Potato Bun','Ζαπάτα']}]},
+  {name:'3P Salads',groups:[{label:'🍅 Κέτσαπ',products:['Κέτσαπ Μπετόνι 4kg','Κέτσαπ Στικ (200τεμ)','Κέτσαπ Catering 4kg']},{label:'🟡 Μουστάρδα',products:['Μουστάρδα Μπετόνι 4kg','Μουστάρδα Στικ (200τεμ)','Μουστάρδα Catering 4kg','Μουστάρδα Κούβας']},{label:'🥄 Μαγιονέζα',products:['Μαγιονέζα 2kg','Μαγιονέζα Catering 5kg','Μαγιονέζα Ho.Re.Ca. 5lt','Μαγιονέζα Premium 5lt','Μαγιονέζα Real 5lt','Μαγιονέζα με Τρούφα 900g','Μαγιονέζα Στικ (200τεμ)','Μαγιονέζα Σιράτσα']},{label:'🥗 Αλοιφές',products:['Καβουροσαλάτα 2kg','Κηπουρού Φάρμα 2kg','Κοπανιστή Χτυπητή 2kg','Μελιτζάνα Καπνιστή 2kg','Μελιτζανοσαλάτα 3Π 2kg','Ουγγαρέζα 3Π 2kg','Ουγγαρέζα Λευκή Smart 2kg','Παπρίκα Smart 2kg','Πατατοσαλάτα 2kg','Ρώσικη Smart 2kg','Σκόρδο Τριμμένο Πολτός 1kg','Σκορδαλιά 2kg','Τζατζίκι Smart 2kg','Τζατζίκι Smart 5kg','Τζατζίκι Premium 5kg','Τονοσαλάτα 2kg','Τσελίγκα 2kg','Ταραμοσαλάτα Smart 2kg','Ταραμοσαλάτα Λευκή 2kg','Τυροκαυτερή Smart 2kg','Τυροκαυτερή με Φέτα 2kg','Χούμους 2kg']},{label:'🍶 Σαλτσες (Sauce)',products:['Avocado Sauce 900g','Αϊόλι','Balsamico Dressing 2kg','Barbeque 2kg','Burger (Αγγουρομαγιονέζα) 2kg','Caesar 2kg','Cheddar Sauce 1,2kg','Chicken Sauce 2kg','Coleslow 2kg','Feta Sauce 2kg','French 2kg','Golden Barbeque 2kg','Pesto alla Genovese 1kg','Pink (Κέτσαπ Sauce) 2kg','Sweet Chilli Sauce 1kg','Sweet Queen Burger 1kg','Βατόμουρο 2kg','Καραμελωμένα Κρεμμύδια 2,3kg','Κεμπάπ 1kg','Λαχανικών και Κρεατών (Yogurt Sauce) 2kg','Σώς Γιαουρτιού 5kg','Μέλι Μουστάρδα Sauce 2kg','Potato 2kg','Παρμεζάνα Σώς 1kg','Σαλτσα Μαγιονέζας 5kg','Σαλτσα Μουστάρδας 2kg','Σώς Μουστάρδας 2kg','Κέτσαπ Κάρυ Σώς','Sweet Curry Σώς','Vinegrette Sauce','Lemon Sauce','Κοκτέιλ Σώς 5 κιλών']},{label:'🌿 Νηστίσιμα',products:['Cocktail Sauce Vegan 2kg','Κηπουρού Φάρμα Νηστίσιμη Vegan 2kg','Μαγιονέζα Vegan 2kg','Μελιτζανοσαλάτα Αγιορείτικη 2kg','Μουστάρδα Sauce Vegan 2kg']},{label:'🫙 Γιαούρτι',products:['Έδεσμα Smart 5kg']},{label:'🐟 Αλίπαστα',products:['Αντζούγια','Γαύρος','Ρέγγα','Τσιροσαλάτα','Τονολακέρδα','Σκουμπρί Vacuum','Ουζομέζε','Χταπόδι','Μύδια','Ανατολικός']},{label:'🍽️ Έτοιμα γεύματα',products:['Παστίτσιο','Μουσακάς','Ρύζι','Σουτζουκάκια']}]},
+  {name:'Creta Farms',groups:[{label:'',products:['Γαλοπούλα μπαστούνι','Γαλοπούλα φ.','Πικ Νικ φ.','182','241','Ζαμπόν','Σαλ. Πιπερόνι','Κοκτέιλ','Ωμοπλάτη']}]},
+  {name:'Βιοσάλ',groups:[{label:'',products:['Τυροκαυτερή','Τζατζίκι','Σικάγο','Ρώσικη','Ρώσικη Νηστίσιμη','Μαγιονέζα','Μαγιονέζα Νηστίσιμη','Σώς μουστάρδας','Κηπουρού','Pesto','Πάπρικα','Πατατοσαλάτα','Αγιορείτικη','Ταραμάς','Ταραμάς λευκός','J.D']}]},
+  {name:'Agrifreda',groups:[{label:'',products:['Πραλίνα 13kg','Buono','Ψησίματος','Μπανάνα','Λευκή','Σπασμένο φουντούκι','Φράουλα','Φιστίκι','Μαύρο μπισκότο','Speculoos','Κεράσι','Dubai','Μερίδες μέλι','Μερίδες κεράσι','Μερίδες φράουλα','Μερίδες πραλίνα','Μπισκότο μαύρο τρίμμα','Χαλβάς βανίλια','Χαλβάς κακάο','Σιρόπι σοκολάτας','Σιρόπι καραμέλας','Σιρόπι βύσινο']}]}
+];
+
+let suppliers, currentData={}, fieldRec=null, fieldRecording=false, activeMicBtn=null;
+
+function init() {
+  suppliers = JSON.parse(localStorage.getItem(SK)||'null') || DS;
+  document.getElementById('recordDate').value = grISO();
+  const em = localStorage.getItem(EK)||'';
+  if(em) document.getElementById('companyEmail').value=em;
+  renderSupplierSelect(); renderManageList();
+}
+
+function saveS() { localStorage.setItem(SK,JSON.stringify(suppliers)); }
+function showTab(t,btn) {
+  ['record','manage'].forEach(x=>document.getElementById('tab-'+x).style.display=x===t?'':'none');
+  document.querySelectorAll('.tab').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+}
+function renderSupplierSelect() {
+  const sel=document.getElementById('supplierSelect');
+  const cur=sel.value;
+  sel.innerHTML='<option value="">— Επίλεξε προμηθευτή —</option>';
+  suppliers.forEach((s,i)=>{const o=document.createElement('option');o.value=i;o.textContent=s.name;sel.appendChild(o);});
+  if(cur!=='') sel.value=cur;
+}
+function rk(gi,pi){return gi+'_'+pi;}
+function loadSupplier() {
+  const idx=document.getElementById('supplierSelect').value;
+  if(idx===''){document.getElementById('catalogSection').style.display='none';document.getElementById('noSupplierMsg').style.display='';return;}
+  const sup=suppliers[idx]; currentData={};
+  const total=sup.groups.reduce((a,g)=>a+g.products.length,0);
+  document.getElementById('catalogTitle').textContent=sup.name+' — '+total+' προϊόντα';
+  document.getElementById('catalogSection').style.display='';
+  document.getElementById('noSupplierMsg').style.display='none';
+  renderCatalog(sup); updateSubject();
+}
+function renderCatalog(sup) {
+  let html='';
+  sup.groups.forEach((g,gi)=>{
+    if(g.label) html+=`<tr class="cat-header-row"><td colspan="6">${g.label}</td></tr>`;
+    g.products.forEach((name,pi)=>{
+      const key=rk(gi,pi);
+      const d=currentData[key]||{qty:'',expiry:'',note:'',suggested:'',skip:false};
+      html+=`<tr id="row-${key}" class="${d.skip?'skip-row':''}">
+        <td class="prod-name-cell">${name}</td>
+        <td class="field-cell"><div class="cell-with-mic"><input type="text" value="${esc(d.qty)}" placeholder="ποσ." oninput="sd('${key}','qty',this.value)" id="qty-${key}"><button class="cell-mic" onclick="cv('${key}','qty',this)">🎤</button></div></td>
+        <td class="field-cell"><div class="cell-with-mic"><input type="text" value="${esc(d.expiry)}" placeholder="λήξη" oninput="sd('${key}','expiry',this.value)" id="expiry-${key}"><button class="cell-mic" onclick="cv('${key}','expiry',this)">🎤</button></div></td>
+        <td class="field-cell"><div class="cell-with-mic"><input type="text" value="${esc(d.note)}" placeholder="παρατ." oninput="sd('${key}','note',this.value)" id="note-${key}"><button class="cell-mic" onclick="cv('${key}','note',this)">🎤</button></div></td>
+        <td class="field-cell"><div class="cell-with-mic"><input type="text" value="${esc(d.suggested)}" placeholder="προτ." oninput="sd('${key}','suggested',this.value)" id="sugg-${key}"><button class="cell-mic" onclick="cv('${key}','suggested',this)">🎤</button></div></td>
+        <td class="field-cell" style="padding:3px 5px 3px 2px;"><button class="skip-btn ${d.skip?'skipped':''}" onclick="ts('${key}')">⏭</button></td>
+      </tr>`;
+    });
+  });
+  document.getElementById('catalogBody').innerHTML=html;
+}
+function esc(v){return(v||'').replace(/"/g,'&quot;');}
+function sd(key,field,val){if(!currentData[key])currentData[key]={qty:'',expiry:'',note:'',suggested:'',skip:false};currentData[key][field]=val;}
+function ts(key){
+  if(!currentData[key])currentData[key]={qty:'',expiry:'',note:'',suggested:'',skip:false};
+  currentData[key].skip=!currentData[key].skip;
+  const row=document.getElementById('row-'+key);
+  row.classList.toggle('skip-row',currentData[key].skip);
+  row.querySelector('.skip-btn').classList.toggle('skipped',currentData[key].skip);
+}
+function clearFields(){
+  if(!confirm('Να σβηστούν όλες οι τιμές;'))return;
+  currentData={};const idx=document.getElementById('supplierSelect').value;
+  if(idx!=='')renderCatalog(suppliers[idx]);
+}
+function updateSubject(){
+  const idx=document.getElementById('supplierSelect').value;
+  const sup=idx!==''?suppliers[idx].name:'';
+  const d=document.getElementById('recordDate').value;
+  let subj='Καταγραφή Αποθήκης - K.F.F Food Service';
+  if(sup) subj+=' - '+sup;
+  if(d){const[y,m,day]=d.split('-');subj+=` (${day}/${m}/${y})`;}
+  document.getElementById('emailSubject').value=subj;
+}
+document.addEventListener('DOMContentLoaded',()=>{
+  const rd=document.getElementById('recordDate');
+  if(rd) rd.addEventListener('input',updateSubject);
+});
+function cv(key,field,btn){
+  if(!SR){alert('Χρησιμοποίησε Chrome ή Safari.');return;}
+  if(fieldRecording){fieldRec&&fieldRec.stop();return;}
+  fieldRec=new SR();fieldRec.lang='el-GR';fieldRec.continuous=false;fieldRec.interimResults=false;
+  fieldRec.onstart=()=>{fieldRecording=true;activeMicBtn=btn;btn.classList.add('active');};
+  fieldRec.onresult=e=>{
+    const val=e.results[0][0].transcript.trim();
+    sd(key,field,val);
+    const ids={qty:`qty-${key}`,expiry:`expiry-${key}`,note:`note-${key}`,suggested:`sugg-${key}`};
+    const inp=document.getElementById(ids[field]);
+    if(inp)inp.value=val;
+  };
+  fieldRec.onerror=()=>stopFR();fieldRec.onend=()=>stopFR();fieldRec.start();
+}
+function fvs(inputId,btn){
+  if(!SR){alert('Χρησιμοποίησε Chrome ή Safari.');return;}
+  if(fieldRecording){fieldRec&&fieldRec.stop();return;}
+  fieldRec=new SR();fieldRec.lang='el-GR';fieldRec.continuous=false;fieldRec.interimResults=false;
+  fieldRec.onstart=()=>{fieldRecording=true;activeMicBtn=btn;btn.classList.add('active');};
+  fieldRec.onresult=e=>{document.getElementById(inputId).value=e.results[0][0].transcript.trim();};
+  fieldRec.onerror=()=>stopFR();fieldRec.onend=()=>stopFR();fieldRec.start();
+}
+function stopFR(){fieldRecording=false;if(activeMicBtn){activeMicBtn.classList.remove('active');activeMicBtn=null;}}
+function renderManageList(){
+  const el=document.getElementById('supplierManageList');
+  if(!suppliers.length){el.innerHTML='<div class="empty">Δεν υπάρχουν προμηθευτές.</div>';return;}
+  el.innerHTML=suppliers.map((s,si)=>`
+    <div class="supplier-item">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;">
+        <span style="flex:1;font-weight:600;font-size:14px;">${s.name}</span>
+        <span style="font-size:12px;color:#94a3b8;">${s.groups.reduce((a,g)=>a+g.products.length,0)} προϊόντα</span>
+        <button class="btn-sm btn-danger" onclick="delS(${si})" style="padding:4px 8px;font-size:12px;">🗑️</button>
+      </div>
+      ${s.groups.map((g,gi)=>`
+        <div style="margin-bottom:8px;">
+          ${g.label?`<div style="font-size:11px;font-weight:600;color:#64748b;text-transform:uppercase;letter-spacing:1px;margin-bottom:5px;">${g.label}</div>`:''}
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:2px 12px;margin-bottom:7px;">
+            ${g.products.map((p,pi)=>`
+              <div style="display:flex;align-items:center;gap:4px;font-size:12px;padding:2px 0;">
+                <span style="flex:1;color:#475569;">${p}</span>
+                <button onclick="delP(${si},${gi},${pi})" style="background:none;border:none;color:#94a3b8;cursor:pointer;font-size:11px;padding:1px 4px;">✕</button>
+              </div>`).join('')}
+          </div>
+          <div class="add-row">
+            <input type="text" id="np-${si}-${gi}" placeholder="Νέο προϊόν...">
+            <button class="mic-btn" onclick="fvs('np-${si}-${gi}',this)" style="width:32px;height:32px;font-size:14px;">🎤</button>
+            <button class="btn-sm btn-success" onclick="addP(${si},${gi})" style="white-space:nowrap;font-size:12px;">+ Προσθήκη</button>
+          </div>
+        </div>`).join('')}
+      <div style="border-top:1px solid #e2e8f0;padding-top:8px;margin-top:4px;">
+        <div style="font-size:11px;color:#94a3b8;margin-bottom:5px;">Νέα κατηγορία:</div>
+        <div class="add-row">
+          <input type="text" id="ng-${si}" placeholder="π.χ. 🧊 Κατεψυγμένα...">
+          <button class="btn-sm" onclick="addG(${si})" style="white-space:nowrap;font-size:12px;">+ Κατηγορία</button>
+        </div>
+      </div>
+    </div>`).join('');
+}
+function addSupplier(){
+  const name=document.getElementById('newSupplierName').value.trim();if(!name)return;
+  suppliers.push({name,groups:[{label:'',products:[]}]});
+  saveS();renderSupplierSelect();renderManageList();
+  document.getElementById('newSupplierName').value='';
+}
+function delS(si){
+  if(!confirm(`Διαγραφή "${suppliers[si].name}";`))return;
+  suppliers.splice(si,1);saveS();renderSupplierSelect();renderManageList();
+}
+function addP(si,gi){
+  const inp=document.getElementById(`np-${si}-${gi}`);
+  const name=inp.value.trim();if(!name)return;
+  suppliers[si].groups[gi].products.push(name);
+  saveS();renderManageList();renderSupplierSelect();inp.value='';
+  const idx=document.getElementById('supplierSelect').value;
+  if(idx!==''&&parseInt(idx)===si){currentData={};renderCatalog(suppliers[si]);}
+}
+function delP(si,gi,pi){
+  suppliers[si].groups[gi].products.splice(pi,1);saveS();renderManageList();
+  const idx=document.getElementById('supplierSelect').value;
+  if(idx!==''&&parseInt(idx)===si){currentData={};renderCatalog(suppliers[si]);}
+}
+function addG(si){
+  const inp=document.getElementById(`ng-${si}`);
+  const label=inp.value.trim();if(!label)return;
+  suppliers[si].groups.push({label,products:[]});saveS();renderManageList();inp.value='';
+}
+function getRows(){
+  const idx=document.getElementById('supplierSelect').value;if(idx==='')return[];
+  let rows=[];
+  suppliers[idx].groups.forEach((g,gi)=>{
+    g.products.forEach((name,pi)=>{
+      const key=rk(gi,pi);const d=currentData[key]||{};
+      if(!d.skip)rows.push({name,qty:d.qty||'',expiry:d.expiry||'',note:d.note||'',suggested:d.suggested||'',groupLabel:g.label});
+    });
+  });
+  return rows;
+}
+function buildPrint(){
+  const idx=document.getElementById('supplierSelect').value;
+  const supName=idx!==''?suppliers[idx].name:'—';
+  const dat=fmtDate(document.getElementById('recordDate').value);
+  const del=fmtDate(document.getElementById('deliveryDate').value);
+  const rows=getRows();let n=0,lastGroup='';
+  const trs=rows.map(p=>{
+    n++;let gh='';
+    if(p.groupLabel&&p.groupLabel!==lastGroup){lastGroup=p.groupLabel;gh=`<tr><td colspan="7" style="padding:6px 8px;background:#f1f5f9;font-size:9pt;font-weight:600;border:1px solid #cbd5e1;">${p.groupLabel}</td></tr>`;}
+    return gh+`<tr style="${n%2?'':'background:#f8fafc'}"><td style="padding:7px 8px;border:1px solid #cbd5e1;text-align:center;color:#64748b;">${n}</td><td style="padding:7px 8px;border:1px solid #cbd5e1;font-weight:600;">${p.name}</td><td style="padding:7px 8px;border:1px solid #cbd5e1;text-align:center;">${p.qty}</td><td style="padding:7px 8px;border:1px solid #cbd5e1;text-align:center;">${p.expiry}</td><td style="padding:7px 8px;border:1px solid #cbd5e1;">${p.note}</td><td style="padding:7px 8px;border:1px solid #cbd5e1;">${p.suggested}</td><td style="padding:7px 8px;border:1px solid #cbd5e1;"></td></tr>`;
+  }).join('');
+  return`<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Καταγραφή - ${supName}</title><style>body{font-family:Arial,sans-serif;padding:24px 28px;color:#1e293b;font-size:10pt;}h2{font-size:14pt;margin:0 0 2px;}h3{font-size:11pt;font-weight:400;margin:0 0 12px;color:#64748b;}table{width:100%;border-collapse:collapse;}th{background:#1e293b;color:#fff;padding:8px;text-align:left;border:1px solid #1e293b;font-size:9pt;}@media print{button{display:none}}</style></head><body><h2>ΚΑΤΑΓΡΑΦΗ ΑΠΟΘΗΚΗΣ — ${supName.toUpperCase()}</h2><h3>K.F.F Food Service</h3><table style="width:100%;margin:0 0 16px;font-size:9pt;border-collapse:collapse;"><tr><td style="padding:3px 0;color:#64748b;width:140px;">Προμηθευτής:</td><td style="font-weight:600;">${supName}</td></tr><tr><td style="padding:3px 0;color:#64748b;">Ημερομηνία:</td><td>${dat}</td></tr><tr><td style="padding:3px 0;color:#64748b;">Πιθανή παραλαβή:</td><td>${del}</td></tr></table><table><thead><tr><th style="width:28px;">#</th><th>Α) Προϊόν</th><th style="width:75px;">Β) Ποσότητα</th><th style="width:85px;">Γ) Λήξη</th><th style="width:17%;">Δ) Παρατήρηση</th><th style="width:15%;">Ε) Προτ. παραγγελία</th><th style="width:13%;">Ζ) Ποσ. παραγγελίας</th></tr></thead><tbody>${trs}</tbody></table><p style="margin-top:16px;font-size:8pt;color:#94a3b8;">Εκτυπώθηκε: ${grDT()}</p><script>window.onload=()=>window.print();<\/script></body></html>`;
+}
+function printList(){const rows=getRows();if(!rows.length){alert('Δεν υπάρχουν προϊόντα.');return;}const w=window.open('','_blank','width=900,height=700');w.document.write(buildPrint());w.document.close();}
+function openEmailModal(){const rows=getRows();if(!rows.length){alert('Δεν υπάρχουν προϊόντα.');return;}updateSubject();document.getElementById('emailModal').style.display='flex';}
+function closeModal(){document.getElementById('emailModal').style.display='none';}
+function sendEmail(){
+  const to=document.getElementById('companyEmail').value.trim();if(!to){alert('Συμπλήρωσε το email.');return;}
+  if(localStorage.getItem(EK)!==to&&confirm('Να αποθηκευτεί ως προεπιλογή;'))localStorage.setItem(EK,to);
+  const idx=document.getElementById('supplierSelect').value;
+  const supName=idx!==''?suppliers[idx].name:'—';
+  const dat=fmtDate(document.getElementById('recordDate').value);
+  const del=fmtDate(document.getElementById('deliveryDate').value);
+  const extra=document.getElementById('emailMsg').value.trim();
+  const rows=getRows();
+  let body=(extra?extra+'\n\n':'')+`K.F.F Food Service\nΚΑΤΑΓΡΑΦΗ ΑΠΟΘΗΚΗΣ — ${supName}\nΗμερομηνία: ${dat}\nΠιθανή Παραλαβή: ${del}\n\n`;
+  let lastGroup='';
+  rows.forEach((p,i)=>{
+    if(p.groupLabel&&p.groupLabel!==lastGroup){lastGroup=p.groupLabel;body+=`\n--- ${p.groupLabel} ---\n`;}
+    body+=`${String(i+1).padEnd(2)} | ${p.name.substring(0,30).padEnd(30)} | ${p.qty.substring(0,10).padEnd(10)} | ${p.expiry.substring(0,10).padEnd(10)} | ${p.note.substring(0,20).padEnd(20)} | ${p.suggested.substring(0,15).padEnd(15)} |\n`;
+  });
+  window.location.href=`mailto:${encodeURIComponent(to)}?subject=${encodeURIComponent(document.getElementById('emailSubject').value)}&body=${encodeURIComponent(body)}`;
+  closeModal();
+}
+</script>
+</body>
+</html>
